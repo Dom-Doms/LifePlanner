@@ -1,0 +1,26 @@
+server:
+  port: ${SERVER_PORT:8080}
+  address: 0.0.0.0
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/life_planner}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:admin}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET:change-me-life-planner-dev-secret}
+    expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:86400}
+  cors:
+    allowed-origin-patterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:*}
+  dev-seed:
+    enabled: ${APP_DEV_SEED_ENABLED:true}
