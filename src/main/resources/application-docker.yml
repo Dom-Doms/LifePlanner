@@ -1,0 +1,22 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/lifeplanner
+    username: lifeplanner_user
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  dev-seed:
+    enabled: ${APP_DEV_SEED_ENABLED:false}
+
+  jwt:
+    secret: ${APP_JWT_SECRET}
+    expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}
