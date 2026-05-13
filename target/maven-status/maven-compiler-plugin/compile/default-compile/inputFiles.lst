@@ -51,6 +51,7 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\wor
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\dto\WorkoutTemplateResponse.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\controller\AuthController.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\controller\WorkoutSessionController.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\model\RecurrenceType.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\security\RestAuthenticationEntryPoint.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\model\EventType.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\model\CalendarEvent.java

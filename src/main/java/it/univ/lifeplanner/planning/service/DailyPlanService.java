@@ -5,6 +5,7 @@ import it.univ.lifeplanner.planning.dto.DailyPlanRequest;
 import it.univ.lifeplanner.planning.dto.DailyPlanResponse;
 import it.univ.lifeplanner.planning.model.DayContext;
 import it.univ.lifeplanner.planning.model.DailyPlan;
+import it.univ.lifeplanner.planning.model.RecurrenceType;
 import it.univ.lifeplanner.planning.repository.DailyPlanRepository;
 import it.univ.lifeplanner.user.model.AppUser;
 import it.univ.lifeplanner.user.service.CurrentUserService;
@@ -31,6 +32,10 @@ public class DailyPlanService {
     @Transactional
     public DailyPlanResponse update(LocalDate date, DailyPlanRequest request) {
         AppUser user = currentUserService.requireCurrentUser();
+        RecurrenceType recurrenceType = request.recurrenceType() == null ? RecurrenceType.NONE : request.recurrenceType();
+        if (recurrenceType != RecurrenceType.NONE && request.recurrenceUntil() == null) {
+            throw new BadRequestException("Recurrence end date is required");
+        }
         DailyPlan plan = repository.findByOwnerAndDate(user, date).orElseGet(() -> createEmpty(user, date));
         DayContext context = null;
         if (request.contextId() != null) {
@@ -41,6 +46,9 @@ public class DailyPlanService {
         }
         plan.setContext(context);
         plan.setNotes(request.notes());
+        if (recurrenceType != RecurrenceType.NONE) {
+            applyContextRecurrence(user, date, request, context, recurrenceType);
+        }
         return DailyPlanResponse.from(plan);
     }
 
@@ -64,5 +72,26 @@ public class DailyPlanService {
         plan.setOwner(user);
         plan.setDate(date);
         return repository.save(plan);
+    }
+
+    private void applyContextRecurrence(AppUser user, LocalDate startDate, DailyPlanRequest request, DayContext context, RecurrenceType type) {
+        LocalDate current = nextDate(startDate, type);
+        while (!current.isAfter(request.recurrenceUntil())) {
+            LocalDate targetDate = current;
+            DailyPlan plan = repository.findByOwnerAndDate(user, targetDate).orElseGet(() -> createEmpty(user, targetDate));
+            plan.setContext(context);
+            plan.setNotes(request.notes());
+            current = nextDate(current, type);
+        }
+    }
+
+    private LocalDate nextDate(LocalDate date, RecurrenceType type) {
+        return switch (type) {
+            case DAILY -> date.plusDays(1);
+            case WEEKLY -> date.plusWeeks(1);
+            case BIWEEKLY -> date.plusWeeks(2);
+            case MONTHLY -> date.plusMonths(1);
+            case NONE -> date.plusDays(1);
+        };
     }
 }

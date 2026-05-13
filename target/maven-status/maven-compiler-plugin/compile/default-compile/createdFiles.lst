@@ -4,8 +4,10 @@ it\univ\lifeplanner\planning\controller\DayContextController.class
 it\univ\lifeplanner\planning\model\DayContext.class
 it\univ\lifeplanner\workout\dto\WorkoutSessionExerciseDto.class
 it\univ\lifeplanner\planning\dto\CalendarEventResponse.class
+it\univ\lifeplanner\planning\model\RecurrenceType.class
 it\univ\lifeplanner\user\repository\UserRepository.class
 it\univ\lifeplanner\planning\service\CalendarEventService.class
+it\univ\lifeplanner\planning\service\DailyPlanService$1.class
 it\univ\lifeplanner\planning\repository\DailyPlanRepository.class
 it\univ\lifeplanner\user\controller\UserController.class
 it\univ\lifeplanner\planning\model\ParticipantType.class
@@ -15,6 +17,7 @@ it\univ\lifeplanner\config\DevDataSeeder.class
 it\univ\lifeplanner\config\CorsConfig$1.class
 it\univ\lifeplanner\LifePlannerApplication.class
 it\univ\lifeplanner\workout\controller\WorkoutTemplateController.class
+it\univ\lifeplanner\planning\service\CalendarEventService$1.class
 it\univ\lifeplanner\common\BadRequestException.class
 it\univ\lifeplanner\planning\dto\DailyPlanRequest.class
 it\univ\lifeplanner\planning\service\DailyPlanService.class

@@ -42,6 +42,17 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public List<UserResponse> search(String query) {
+        if (query == null || query.trim().length() < 2) {
+            return List.of();
+        }
+        return userRepository.search(query.trim()).stream()
+            .limit(10)
+            .map(UserResponse::from)
+            .toList();
+    }
+
+    @Transactional(readOnly = true)
     public UserResponse findById(Long id) {
         return UserResponse.from(requireUser(id));
     }

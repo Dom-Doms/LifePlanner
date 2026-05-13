@@ -40,13 +40,19 @@ public class WorkoutSessionService {
                 .map(WorkoutSessionResponse::from)
                 .toList();
         }
-        return repository.findByOwnerAndDateBetweenOrderByDateAsc(user, from, to).stream().map(WorkoutSessionResponse::from).toList();
+        return repository.findVisibleBetween(user, from, to).stream().map(WorkoutSessionResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
     public List<WorkoutSessionResponse> findByDate(LocalDate date) {
         AppUser user = currentUserService.requireCurrentUser();
-        return repository.findByOwnerAndDateOrderByIdAsc(user, date).stream().map(WorkoutSessionResponse::from).toList();
+        if (currentUserService.isAdmin(user)) {
+            return repository.findAll().stream()
+                .filter(session -> session.getDate().equals(date))
+                .map(WorkoutSessionResponse::from)
+                .toList();
+        }
+        return repository.findVisibleByDate(user, date).stream().map(WorkoutSessionResponse::from).toList();
     }
 
     @Transactional(readOnly = true)
@@ -78,13 +84,31 @@ public class WorkoutSessionService {
     @Transactional
     public WorkoutSessionResponse createFromTemplate(WorkoutFromTemplateRequest request) {
         WorkoutTemplate template = templateService.requireOwnedEntity(request.templateId());
+        return WorkoutSessionResponse.from(repository.save(createFromTemplateEntity(
+            currentUserService.requireCurrentUser(),
+            template,
+            request.date(),
+            request.title(),
+            request.notes(),
+            request.participants()
+        )));
+    }
+
+    public WorkoutSession createFromTemplateEntity(
+        AppUser owner,
+        WorkoutTemplate template,
+        LocalDate date,
+        String title,
+        String notes,
+        List<WorkoutParticipantDto> participants
+    ) {
         WorkoutSession session = new WorkoutSession();
-        session.setOwner(currentUserService.requireCurrentUser());
+        session.setOwner(owner);
         session.setTemplate(template);
-        session.setDate(request.date());
-        session.setTitle(request.title() == null || request.title().isBlank() ? template.getName() : request.title().trim());
-        session.setNotes(request.notes());
-        copyParticipants(session, request.participants());
+        session.setDate(date);
+        session.setTitle(title == null || title.isBlank() ? template.getName() : title.trim());
+        session.setNotes(notes);
+        copyParticipants(session, participants);
         int index = 0;
         for (WorkoutExercise exercise : template.getExercises()) {
             WorkoutSessionExercise copy = new WorkoutSessionExercise();
@@ -99,7 +123,7 @@ public class WorkoutSessionService {
             copy.setExerciseOrder(index++);
             session.getExercises().add(copy);
         }
-        return WorkoutSessionResponse.from(repository.save(session));
+        return session;
     }
 
     public WorkoutSession requireOwnedEntity(Long id) {
@@ -150,11 +174,14 @@ public class WorkoutSessionService {
         for (WorkoutParticipantDto dto : participants) {
             WorkoutSessionParticipant participant = new WorkoutSessionParticipant();
             participant.setWorkoutSession(session);
-            participant.setDisplayName(dto.displayName().trim());
             participant.setParticipantType(dto.participantType() == null ? ParticipantType.FREE_TEXT : dto.participantType());
             if (dto.userId() != null) {
-                participant.setRegisteredUser(userRepository.findById(dto.userId()).orElseThrow(() -> new NotFoundException("Participant user not found")));
+                AppUser registeredUser = userRepository.findById(dto.userId()).orElseThrow(() -> new NotFoundException("Participant user not found"));
+                participant.setRegisteredUser(registeredUser);
+                participant.setDisplayName(registeredUser.getUsername());
                 participant.setParticipantType(ParticipantType.REGISTERED_USER);
+            } else {
+                participant.setDisplayName(dto.displayName().trim());
             }
             session.getParticipants().add(participant);
         }

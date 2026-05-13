@@ -5,5 +5,6 @@ public enum EventType {
     EXAM,
     PERSONAL,
     GYM,
+    WORKOUT,
     OTHER
 }

@@ -38,6 +38,9 @@ public class WorkoutTemplate {
     @Column(columnDefinition = "text")
     private String description;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("exerciseOrder ASC")
     private List<WorkoutExercise> exercises = new ArrayList<>();

@@ -2,6 +2,7 @@ package it.univ.lifeplanner.planning.dto;
 
 import it.univ.lifeplanner.planning.model.CalendarEvent;
 import it.univ.lifeplanner.planning.model.EventType;
+import it.univ.lifeplanner.planning.model.RecurrenceType;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -19,6 +20,9 @@ public record CalendarEventResponse(
     String location,
     String color,
     Long workoutSessionId,
+    Long workoutTemplateId,
+    RecurrenceType recurrenceType,
+    LocalDate recurrenceUntil,
     List<ParticipantDto> participants,
     Instant createdAt,
     Instant updatedAt
@@ -36,6 +40,9 @@ public record CalendarEventResponse(
             event.getLocation(),
             event.getColor(),
             event.getWorkoutSession() == null ? null : event.getWorkoutSession().getId(),
+            event.getWorkoutSession() == null || event.getWorkoutSession().getTemplate() == null ? null : event.getWorkoutSession().getTemplate().getId(),
+            event.getRecurrenceType(),
+            event.getRecurrenceUntil(),
             event.getParticipants().stream().map(ParticipantDto::from).toList(),
             event.getCreatedAt(),
             event.getUpdatedAt()

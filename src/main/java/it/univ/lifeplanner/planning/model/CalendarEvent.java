@@ -56,13 +56,19 @@ public class CalendarEvent {
     @Column(nullable = false, length = 30)
     private EventType type = EventType.OTHER;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private RecurrenceType recurrenceType = RecurrenceType.NONE;
+
+    private LocalDate recurrenceUntil;
+
     @Column(length = 160)
     private String location;
 
     @Column(length = 30)
     private String color;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private WorkoutSession workoutSession;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)

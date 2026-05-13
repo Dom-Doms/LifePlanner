@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WorkoutTemplateRepository extends JpaRepository<WorkoutTemplate, Long> {
     List<WorkoutTemplate> findByOwnerOrderByNameAsc(AppUser owner);
+    List<WorkoutTemplate> findByOwnerAndActiveTrueOrderByNameAsc(AppUser owner);
+    List<WorkoutTemplate> findByActiveTrueOrderByNameAsc();
 }

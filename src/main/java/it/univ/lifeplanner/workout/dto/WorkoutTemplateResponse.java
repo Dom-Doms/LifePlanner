@@ -8,6 +8,7 @@ public record WorkoutTemplateResponse(
     Long id,
     String name,
     String description,
+    boolean active,
     List<WorkoutExerciseDto> exercises,
     Instant createdAt,
     Instant updatedAt
@@ -17,6 +18,7 @@ public record WorkoutTemplateResponse(
             template.getId(),
             template.getName(),
             template.getDescription(),
+            template.isActive(),
             template.getExercises().stream().map(WorkoutExerciseDto::from).toList(),
             template.getCreatedAt(),
             template.getUpdatedAt()
