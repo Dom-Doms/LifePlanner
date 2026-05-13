@@ -21,11 +21,13 @@ import it.univ.lifeplanner.workout.service.WorkoutTemplateService;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CalendarEventService {
     private final CalendarEventRepository repository;
     private final UserRepository userRepository;
@@ -54,31 +56,44 @@ public class CalendarEventService {
     @Transactional
     public CalendarEventResponse create(CalendarEventRequest request) {
         AppUser user = currentUserService.requireCurrentUser();
+        log.info("Creating calendar event for userId={} request={}", user.getId(), request);
         validateEvent(request);
         validateRecurrence(request);
-        CalendarEvent first = null;
-        LocalDate current = request.eventDate();
-        LocalDate last = recurrenceLastDate(request);
-        while (!current.isAfter(last)) {
-            CalendarEvent event = new CalendarEvent();
-            event.setOwner(user);
-            apply(event, request, current);
-            CalendarEvent saved = repository.save(event);
-            if (first == null) {
-                first = saved;
+        try {
+            CalendarEvent first = null;
+            LocalDate current = request.eventDate();
+            LocalDate last = recurrenceLastDate(request);
+            while (!current.isAfter(last)) {
+                CalendarEvent event = new CalendarEvent();
+                event.setOwner(user);
+                apply(event, request, current);
+                CalendarEvent saved = repository.saveAndFlush(event);
+                if (first == null) {
+                    first = saved;
+                }
+                current = nextDate(current, recurrenceType(request));
             }
-            current = nextDate(current, recurrenceType(request));
+            return CalendarEventResponse.from(first);
+        } catch (RuntimeException ex) {
+            log.error("Calendar event creation failed for userId={} request={}", user.getId(), request, ex);
+            throw ex;
         }
-        return CalendarEventResponse.from(first);
     }
 
     @Transactional
     public CalendarEventResponse update(Long id, CalendarEventRequest request) {
         CalendarEvent event = requireOwned(id);
+        log.info("Updating calendar event id={} request={}", id, request);
         validateEvent(request);
         validateRecurrence(request);
-        apply(event, request, request.eventDate());
-        return CalendarEventResponse.from(event);
+        try {
+            apply(event, request, request.eventDate());
+            repository.flush();
+            return CalendarEventResponse.from(event);
+        } catch (RuntimeException ex) {
+            log.error("Calendar event update failed for id={} request={}", id, request, ex);
+            throw ex;
+        }
     }
 
     @Transactional
@@ -141,6 +156,9 @@ public class CalendarEventService {
             return;
         }
         for (ParticipantDto dto : participants) {
+            if (dto == null) {
+                throw new BadRequestException("Participant cannot be empty");
+            }
             validateParticipant(dto);
             EventParticipant participant = new EventParticipant();
             participant.setEvent(event);
@@ -162,6 +180,7 @@ public class CalendarEventService {
             return List.of();
         }
         return participants.stream()
+            .filter(item -> item != null)
             .map(item -> new WorkoutParticipantDto(item.id(), item.registeredUserId(), item.displayName(), item.participantType()))
             .toList();
     }
