@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentUserService currentUserService;
 
     @Transactional
     public UserResponse register(RegisterRequest request) {
@@ -46,7 +47,9 @@ public class UserService {
         if (query == null || query.trim().length() < 2) {
             return List.of();
         }
+        AppUser currentUser = currentUserService.requireCurrentUser();
         return userRepository.search(query.trim()).stream()
+            .filter(user -> !user.getId().equals(currentUser.getId()))
             .limit(10)
             .map(UserResponse::from)
             .toList();

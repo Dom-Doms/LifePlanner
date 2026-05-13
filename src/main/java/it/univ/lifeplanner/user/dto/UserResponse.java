@@ -7,6 +7,7 @@ import java.time.Instant;
 public record UserResponse(
     Long id,
     String username,
+    String displayName,
     String email,
     UserRole role,
     Instant createdAt,
@@ -15,6 +16,7 @@ public record UserResponse(
     public static UserResponse from(AppUser user) {
         return new UserResponse(
             user.getId(),
+            user.getUsername(),
             user.getUsername(),
             user.getEmail(),
             user.getRole(),

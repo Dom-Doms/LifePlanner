@@ -54,6 +54,7 @@ public class CalendarEventService {
     @Transactional
     public CalendarEventResponse create(CalendarEventRequest request) {
         AppUser user = currentUserService.requireCurrentUser();
+        validateEvent(request);
         validateRecurrence(request);
         CalendarEvent first = null;
         LocalDate current = request.eventDate();
@@ -74,6 +75,7 @@ public class CalendarEventService {
     @Transactional
     public CalendarEventResponse update(Long id, CalendarEventRequest request) {
         CalendarEvent event = requireOwned(id);
+        validateEvent(request);
         validateRecurrence(request);
         apply(event, request, request.eventDate());
         return CalendarEventResponse.from(event);
@@ -111,7 +113,7 @@ public class CalendarEventService {
         event.setStartTime(request.allDay() ? null : request.startTime());
         event.setEndTime(request.allDay() ? null : request.endTime());
         event.setAllDay(request.allDay());
-        event.setType(request.type());
+        event.setType(request.type() == null ? it.univ.lifeplanner.planning.model.EventType.OTHER : request.type());
         event.setLocation(request.location());
         event.setColor(request.color());
         event.setRecurrenceType(recurrenceType(request));
@@ -143,11 +145,12 @@ public class CalendarEventService {
             return;
         }
         for (ParticipantDto dto : participants) {
+            validateParticipant(dto);
             EventParticipant participant = new EventParticipant();
             participant.setEvent(event);
             participant.setParticipantType(dto.participantType() == null ? ParticipantType.FREE_TEXT : dto.participantType());
-            if (dto.userId() != null) {
-                AppUser registeredUser = userRepository.findById(dto.userId()).orElseThrow(() -> new NotFoundException("Participant user not found"));
+            if (dto.registeredUserId() != null) {
+                AppUser registeredUser = userRepository.findById(dto.registeredUserId()).orElseThrow(() -> new BadRequestException("Participant user not found"));
                 participant.setRegisteredUser(registeredUser);
                 participant.setDisplayName(registeredUser.getUsername());
                 participant.setParticipantType(ParticipantType.REGISTERED_USER);
@@ -163,8 +166,30 @@ public class CalendarEventService {
             return List.of();
         }
         return participants.stream()
-            .map(item -> new WorkoutParticipantDto(item.id(), item.userId(), item.displayName(), item.participantType()))
+            .map(item -> new WorkoutParticipantDto(item.id(), item.registeredUserId(), item.displayName(), item.participantType()))
             .toList();
+    }
+
+    private void validateEvent(CalendarEventRequest request) {
+        if (!request.allDay() && (request.startTime() == null || request.endTime() == null)) {
+            throw new BadRequestException("Start and end time are required for timed events");
+        }
+        if (!request.allDay() && !request.endTime().isAfter(request.startTime())) {
+            throw new BadRequestException("End time must be after start time");
+        }
+        if (Boolean.TRUE.equals(request.reminderEnabled()) && request.reminderMinutesBefore() == null) {
+            throw new BadRequestException("Reminder minutes are required when reminder is enabled");
+        }
+    }
+
+    private void validateParticipant(ParticipantDto participant) {
+        ParticipantType type = participant.participantType() == null ? ParticipantType.FREE_TEXT : participant.participantType();
+        if (type == ParticipantType.REGISTERED_USER && participant.registeredUserId() == null) {
+            throw new BadRequestException("Registered participant user is required");
+        }
+        if (type == ParticipantType.FREE_TEXT && (participant.displayName() == null || participant.displayName().isBlank())) {
+            throw new BadRequestException("Free text participant name is required");
+        }
     }
 
     private void validateRecurrence(CalendarEventRequest request) {
