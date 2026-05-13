@@ -1,0 +1,28 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/lifeplanner
+    username: lifeplanner_user
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  dev-seed:
+    enabled: ${APP_DEV_SEED_ENABLED:false}
+
+  jwt:
+    secret: ${APP_JWT_SECRET}
+    expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}
+
+  push:
+    vapid:
+      public-key: ${APP_PUSH_VAPID_PUBLIC_KEY:}
+      private-key: ${APP_PUSH_VAPID_PRIVATE_KEY:}
+      subject: ${APP_PUSH_VAPID_SUBJECT:mailto:admin@lifeplanner.local}

@@ -118,11 +118,7 @@ public class CalendarEventService {
         event.setColor(request.color());
         event.setRecurrenceType(recurrenceType(request));
         event.setRecurrenceUntil(request.recurrenceUntil());
-        event.setReminderEnabled(Boolean.TRUE.equals(request.reminderEnabled()));
-        event.setReminderMinutesBefore(Boolean.TRUE.equals(request.reminderEnabled()) ? reminderMinutes(request) : null);
-        if (!Boolean.TRUE.equals(request.reminderEnabled())) {
-            event.setReminderSentAt(null);
-        }
+        applyReminder(event, request);
         if (request.workoutTemplateId() != null) {
             WorkoutTemplate template = workoutTemplateService.requireOwnedEntity(request.workoutTemplateId());
             event.setWorkoutSession(workoutSessionService.createFromTemplateEntity(
@@ -177,9 +173,7 @@ public class CalendarEventService {
         if (!request.allDay() && !request.endTime().isAfter(request.startTime())) {
             throw new BadRequestException("End time must be after start time");
         }
-        if (Boolean.TRUE.equals(request.reminderEnabled()) && request.reminderMinutesBefore() == null) {
-            throw new BadRequestException("Reminder minutes are required when reminder is enabled");
-        }
+        validateReminder(request);
     }
 
     private void validateParticipant(ParticipantDto participant) {
@@ -192,6 +186,31 @@ public class CalendarEventService {
         }
     }
 
+    private void applyReminder(CalendarEvent event, CalendarEventRequest request) {
+        boolean reminderEnabled = Boolean.TRUE.equals(request.reminderEnabled());
+        event.setReminderEnabled(reminderEnabled);
+        if (!reminderEnabled) {
+            event.setReminderMinutesBefore(null);
+            event.setReminderSentAt(null);
+            return;
+        }
+        validateReminder(request);
+        event.setReminderMinutesBefore(request.reminderMinutesBefore());
+        event.setReminderSentAt(null);
+    }
+
+    private void validateReminder(CalendarEventRequest request) {
+        if (!Boolean.TRUE.equals(request.reminderEnabled())) {
+            return;
+        }
+        if (request.reminderMinutesBefore() == null || request.reminderMinutesBefore() <= 0) {
+            throw new BadRequestException("Reminder minutes before must be greater than 0");
+        }
+        if (!List.of(10, 30, 60, 1440).contains(request.reminderMinutesBefore())) {
+            throw new BadRequestException("Unsupported reminder value");
+        }
+    }
+
     private void validateRecurrence(CalendarEventRequest request) {
         RecurrenceType type = recurrenceType(request);
         if (type != RecurrenceType.NONE && request.recurrenceUntil() == null) {
@@ -200,16 +219,6 @@ public class CalendarEventService {
         if (type != RecurrenceType.NONE && request.recurrenceUntil().isBefore(request.eventDate())) {
             throw new BadRequestException("Recurrence end date cannot be before event date");
         }
-    }
-
-    private int reminderMinutes(CalendarEventRequest request) {
-        if (request.reminderMinutesBefore() == null) {
-            return 30;
-        }
-        if (!List.of(10, 30, 60, 1440).contains(request.reminderMinutesBefore())) {
-            throw new BadRequestException("Unsupported reminder value");
-        }
-        return request.reminderMinutesBefore();
     }
 
     private RecurrenceType recurrenceType(CalendarEventRequest request) {
