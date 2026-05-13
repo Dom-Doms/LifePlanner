@@ -43,6 +43,9 @@ public class PushNotificationService {
 
     @Transactional(readOnly = true)
     public String getPublicKey() {
+        if (!hasVapidKeys()) {
+            throw new BadRequestException("Le notifiche push non sono configurate sul server. Configura APP_PUSH_VAPID_PUBLIC_KEY e APP_PUSH_VAPID_PRIVATE_KEY.");
+        }
         return vapidPublicKey;
     }
 
