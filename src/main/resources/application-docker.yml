@@ -20,3 +20,9 @@ app:
   jwt:
     secret: ${APP_JWT_SECRET}
     expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:3600}
+
+  push:
+    vapid:
+      public-key: ${APP_PUSH_VAPID_PUBLIC_KEY:}
+      private-key: ${APP_PUSH_VAPID_PRIVATE_KEY:}
+      subject: ${APP_PUSH_VAPID_SUBJECT:mailto:admin@lifeplanner.local}

@@ -23,6 +23,9 @@ public record CalendarEventResponse(
     Long workoutTemplateId,
     RecurrenceType recurrenceType,
     LocalDate recurrenceUntil,
+    boolean reminderEnabled,
+    Integer reminderMinutesBefore,
+    Instant reminderSentAt,
     List<ParticipantDto> participants,
     Instant createdAt,
     Instant updatedAt
@@ -43,6 +46,9 @@ public record CalendarEventResponse(
             event.getWorkoutSession() == null || event.getWorkoutSession().getTemplate() == null ? null : event.getWorkoutSession().getTemplate().getId(),
             event.getRecurrenceType(),
             event.getRecurrenceUntil(),
+            event.isReminderEnabled(),
+            event.getReminderMinutesBefore(),
+            event.getReminderSentAt(),
             event.getParticipants().stream().map(ParticipantDto::from).toList(),
             event.getCreatedAt(),
             event.getUpdatedAt()

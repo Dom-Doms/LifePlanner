@@ -24,3 +24,8 @@ app:
     allowed-origin-patterns: ${APP_CORS_ALLOWED_ORIGIN_PATTERNS:*}
   dev-seed:
     enabled: ${APP_DEV_SEED_ENABLED:true}
+  push:
+    vapid:
+      public-key: ${APP_PUSH_VAPID_PUBLIC_KEY:}
+      private-key: ${APP_PUSH_VAPID_PRIVATE_KEY:}
+      subject: ${APP_PUSH_VAPID_SUBJECT:mailto:admin@lifeplanner.local}

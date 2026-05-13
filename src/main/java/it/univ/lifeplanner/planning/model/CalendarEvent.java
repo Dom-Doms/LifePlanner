@@ -62,6 +62,13 @@ public class CalendarEvent {
 
     private LocalDate recurrenceUntil;
 
+    @Column(nullable = false)
+    private boolean reminderEnabled;
+
+    private Integer reminderMinutesBefore = 30;
+
+    private Instant reminderSentAt;
+
     @Column(length = 160)
     private String location;
 

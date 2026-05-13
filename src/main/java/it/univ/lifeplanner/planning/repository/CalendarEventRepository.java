@@ -21,4 +21,6 @@ public interface CalendarEventRepository extends JpaRepository<CalendarEvent, Lo
     List<CalendarEvent> findVisibleBetween(@Param("user") AppUser user, @Param("from") LocalDate from, @Param("to") LocalDate to);
 
     long countByWorkoutSession_Template_Id(Long templateId);
+
+    List<CalendarEvent> findByReminderEnabledTrueAndReminderSentAtIsNullAndEventDateBetweenOrderByEventDateAscStartTimeAsc(LocalDate from, LocalDate to);
 }

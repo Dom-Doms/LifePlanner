@@ -24,6 +24,8 @@ public record CalendarEventRequest(
     Long workoutTemplateId,
     RecurrenceType recurrenceType,
     LocalDate recurrenceUntil,
+    Boolean reminderEnabled,
+    Integer reminderMinutesBefore,
     @Valid List<ParticipantDto> participants
 ) {
 }
