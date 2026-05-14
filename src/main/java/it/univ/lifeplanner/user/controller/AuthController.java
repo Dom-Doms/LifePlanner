@@ -3,9 +3,13 @@ package it.univ.lifeplanner.user.controller;
 import it.univ.lifeplanner.security.JwtTokenService;
 import it.univ.lifeplanner.security.UserPrincipal;
 import it.univ.lifeplanner.user.dto.AuthResponse;
+import it.univ.lifeplanner.user.dto.ForgotPasswordRequest;
 import it.univ.lifeplanner.user.dto.LoginRequest;
+import it.univ.lifeplanner.user.dto.MessageResponse;
 import it.univ.lifeplanner.user.dto.RegisterRequest;
+import it.univ.lifeplanner.user.dto.ResetPasswordRequest;
 import it.univ.lifeplanner.user.dto.UserResponse;
+import it.univ.lifeplanner.user.passwordreset.PasswordResetService;
 import it.univ.lifeplanner.user.repository.UserRepository;
 import it.univ.lifeplanner.user.service.CurrentUserService;
 import it.univ.lifeplanner.user.service.UserService;
@@ -29,6 +33,7 @@ public class AuthController {
     private final UserService userService;
     private final CurrentUserService currentUserService;
     private final UserRepository userRepository;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/register")
     public UserResponse register(@Valid @RequestBody RegisterRequest request) {
@@ -43,6 +48,16 @@ public class AuthController {
         UserPrincipal principal = (UserPrincipal) authentication.getPrincipal();
         String token = jwtTokenService.generateToken(principal);
         return new AuthResponse(token, userRepository.findByEmail(principal.getUsername()).map(UserResponse::from).orElseThrow());
+    }
+
+    @PostMapping("/forgot-password")
+    public MessageResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        return passwordResetService.requestReset(request.email());
+    }
+
+    @PostMapping("/reset-password")
+    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        return passwordResetService.resetPassword(request.token(), request.newPassword());
     }
 
     @GetMapping("/me")

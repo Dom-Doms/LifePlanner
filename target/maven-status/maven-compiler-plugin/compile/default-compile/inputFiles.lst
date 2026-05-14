@@ -15,6 +15,7 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\wor
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\RegisterRequest.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\repository\PushSubscriptionRepository.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\security\SecurityConfig.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\passwordreset\PasswordResetTokenRepository.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\service\WorkoutTemplateService.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\error\ApiError.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\service\CurrentUserService.java
@@ -24,6 +25,7 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\pus
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\dto\WorkoutFromTemplateRequest.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\dto\PushSubscriptionResponse.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\AuthResponse.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\MessageResponse.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\controller\DailyPlanController.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\dto\DailyPlanResponse.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\repository\DailyPlanRepository.java
@@ -52,8 +54,10 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\pla
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\controller\PushNotificationController.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\model\ParticipantType.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\common\ForbiddenException.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\ResetPasswordRequest.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\common\NotFoundException.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\UserResponse.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\passwordreset\PasswordResetService.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\repository\CalendarEventRepository.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\security\JwtAuthenticationFilter.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\dto\WorkoutSessionExerciseDto.java
@@ -71,7 +75,9 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\use
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\dto\CalendarEventRequest.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\controller\WorkoutTemplateController.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\model\WorkoutExercise.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\passwordreset\PasswordResetToken.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\controller\UserController.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\dto\ForgotPasswordRequest.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\service\DailyPlanService.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\planning\model\EventParticipant.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\user\repository\UserRepository.java

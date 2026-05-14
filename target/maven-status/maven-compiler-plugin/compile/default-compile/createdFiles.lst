@@ -13,6 +13,7 @@ it\univ\lifeplanner\planning\service\DailyPlanService$1.class
 it\univ\lifeplanner\planning\repository\DailyPlanRepository.class
 it\univ\lifeplanner\user\controller\UserController.class
 it\univ\lifeplanner\planning\model\ParticipantType.class
+it\univ\lifeplanner\user\passwordreset\PasswordResetToken.class
 it\univ\lifeplanner\push\service\ReminderScheduler.class
 it\univ\lifeplanner\security\JwtAuthenticationFilter.class
 it\univ\lifeplanner\workout\model\WorkoutTemplate.class
@@ -20,6 +21,7 @@ it\univ\lifeplanner\config\DevDataSeeder.class
 it\univ\lifeplanner\config\CorsConfig$1.class
 it\univ\lifeplanner\LifePlannerApplication.class
 it\univ\lifeplanner\workout\controller\WorkoutTemplateController.class
+it\univ\lifeplanner\user\passwordreset\PasswordResetService.class
 it\univ\lifeplanner\planning\service\CalendarEventService$1.class
 it\univ\lifeplanner\common\BadRequestException.class
 it\univ\lifeplanner\planning\dto\DailyPlanRequest.class
@@ -35,12 +37,14 @@ it\univ\lifeplanner\workout\dto\WorkoutFromTemplateRequest.class
 it\univ\lifeplanner\error\ApiError.class
 it\univ\lifeplanner\workout\dto\WorkoutSessionRequest.class
 it\univ\lifeplanner\user\model\UserRole.class
+it\univ\lifeplanner\user\passwordreset\PasswordResetTokenRepository.class
 it\univ\lifeplanner\user\dto\RegisterRequest.class
 it\univ\lifeplanner\error\GlobalExceptionHandler.class
 it\univ\lifeplanner\planning\model\EventType.class
 it\univ\lifeplanner\security\JwtTokenService.class
 it\univ\lifeplanner\workout\model\WorkoutSession.class
 it\univ\lifeplanner\push\dto\PushTestResponse.class
+it\univ\lifeplanner\user\dto\ForgotPasswordRequest.class
 it\univ\lifeplanner\workout\repository\WorkoutSessionRepository.class
 it\univ\lifeplanner\security\UserPrincipal.class
 it\univ\lifeplanner\push\controller\PushNotificationController.class
@@ -50,6 +54,7 @@ it\univ\lifeplanner\common\UnauthorizedException.class
 it\univ\lifeplanner\push\dto\PushTestRequest.class
 it\univ\lifeplanner\security\SecurityConfig.class
 it\univ\lifeplanner\push\dto\PushPayload.class
+it\univ\lifeplanner\user\dto\MessageResponse.class
 it\univ\lifeplanner\planning\dto\ParticipantDto.class
 it\univ\lifeplanner\security\RestAuthenticationEntryPoint.class
 it\univ\lifeplanner\planning\repository\DayContextRepository.class
@@ -64,6 +69,7 @@ it\univ\lifeplanner\workout\repository\WorkoutTemplateRepository.class
 it\univ\lifeplanner\user\controller\AuthController.class
 it\univ\lifeplanner\push\service\PushNotificationService.class
 it\univ\lifeplanner\planning\controller\CalendarEventController.class
+it\univ\lifeplanner\user\dto\ResetPasswordRequest.class
 it\univ\lifeplanner\user\service\UserService.class
 it\univ\lifeplanner\common\NotFoundException.class
 it\univ\lifeplanner\push\dto\PushSubscriptionRequest$PushSubscriptionKeys.class

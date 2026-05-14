@@ -7,6 +7,17 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/life_planner}
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:admin}
+  mail:
+    host: ${SPRING_MAIL_HOST:}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SPRING_MAIL_SMTP_AUTH:true}
+          starttls:
+            enable: ${SPRING_MAIL_SMTP_STARTTLS_ENABLE:true}
   jpa:
     hibernate:
       ddl-auto: update
@@ -17,6 +28,7 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 
 app:
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:5173}
   jwt:
     secret: ${APP_JWT_SECRET:change-me-life-planner-dev-secret}
     expiration-seconds: ${APP_JWT_EXPIRATION_SECONDS:86400}
