@@ -14,14 +14,18 @@ import it.univ.lifeplanner.user.service.CurrentUserService;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Security;
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nl.martijndwars.webpush.Encoding;
 import nl.martijndwars.webpush.Notification;
 import nl.martijndwars.webpush.PushService;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,7 +54,7 @@ public class PushNotificationService {
         if (!hasVapidKeys()) {
             throw new BadRequestException("Le notifiche push non sono configurate sul server. Configura APP_PUSH_VAPID_PUBLIC_KEY e APP_PUSH_VAPID_PRIVATE_KEY.");
         }
-        return vapidPublicKey;
+        return normalizedVapidPublicKey();
     }
 
     @Transactional
@@ -131,20 +135,39 @@ public class PushNotificationService {
         }
         try {
             ensureBouncyCastle();
+            String publicKey = normalizedVapidPublicKey();
+            String privateKey = normalizedVapidPrivateKey();
+            String subject = normalizedVapidSubject();
             String jsonPayload = objectMapper.writeValueAsString(payload);
-            Notification notification = new Notification(subscription.getEndpoint(), subscription.getP256dh(), subscription.getAuth(), jsonPayload);
-            PushService pushService = new PushService(vapidPublicKey, vapidPrivateKey, vapidSubject);
-            HttpResponse response = pushService.send(notification);
+            log.info(
+                "Sending push: subject={}, publicKeyLen={}, privateKeyLen={}, endpointPrefix={}, p256dhLen={}, authLen={}, payload={}",
+                subject,
+                publicKey.length(),
+                privateKey.length(),
+                endpointPreview(subscription.getEndpoint()),
+                safeLength(subscription.getP256dh()),
+                safeLength(subscription.getAuth()),
+                jsonPayload
+            );
+            Notification notification = new Notification(
+                subscription.getEndpoint(),
+                subscription.getP256dh(),
+                subscription.getAuth(),
+                jsonPayload.getBytes(StandardCharsets.UTF_8)
+            );
+            PushService pushService = new PushService(publicKey, privateKey, subject);
+            HttpResponse response = pushService.send(notification, Encoding.AES128GCM);
             int status = response.getStatusLine().getStatusCode();
             String reason = response.getStatusLine().getReasonPhrase();
+            String responseBody = responseBody(response);
             if (status == 404 || status == 410) {
                 markInactive(subscription);
-                String message = "Push send failed: " + status + " " + reason;
+                String message = pushFailureMessage(status, reason, responseBody);
                 log.warn("Push subscription expired for {}: {}", endpointPreview(subscription.getEndpoint()), message);
                 return new PushSendResult(false, status, message, true);
             }
             if (status < 200 || status >= 300) {
-                String message = "Push send failed: " + status + " " + reason;
+                String message = pushFailureMessage(status, reason, responseBody);
                 log.warn("Push send failed for {}: {}", endpointPreview(subscription.getEndpoint()), message);
                 return new PushSendResult(false, status, message, false);
             }
@@ -169,8 +192,9 @@ public class PushNotificationService {
     }
 
     private boolean hasVapidKeys() {
-        return vapidPublicKey != null && !vapidPublicKey.isBlank()
-            && vapidPrivateKey != null && !vapidPrivateKey.isBlank();
+        return !normalizedVapidPublicKey().isBlank()
+            && !normalizedVapidPrivateKey().isBlank()
+            && !normalizedVapidSubject().isBlank();
     }
 
     private void markInactive(PushSubscriptionEntity subscription) {
@@ -197,8 +221,60 @@ public class PushNotificationService {
         if (endpoint == null || endpoint.isBlank()) {
             return "<empty-endpoint>";
         }
-        int visibleChars = Math.min(endpoint.length(), 48);
+        int visibleChars = Math.min(endpoint.length(), 80);
         return endpoint.substring(0, visibleChars) + (endpoint.length() > visibleChars ? "..." : "");
+    }
+
+    private String normalizedVapidPublicKey() {
+        return normalizeConfigValue(vapidPublicKey);
+    }
+
+    private String normalizedVapidPrivateKey() {
+        return normalizeConfigValue(vapidPrivateKey);
+    }
+
+    private String normalizedVapidSubject() {
+        return normalizeConfigValue(vapidSubject);
+    }
+
+    private String normalizeConfigValue(String value) {
+        if (value == null) {
+            return "";
+        }
+        String normalized = value.trim();
+        if (normalized.length() >= 2
+            && ((normalized.startsWith("\"") && normalized.endsWith("\""))
+            || (normalized.startsWith("'") && normalized.endsWith("'")))) {
+            return normalized.substring(1, normalized.length() - 1).trim();
+        }
+        return normalized;
+    }
+
+    private int safeLength(String value) {
+        return value == null ? 0 : value.length();
+    }
+
+    private String responseBody(HttpResponse response) throws IOException {
+        HttpEntity entity = response.getEntity();
+        if (entity == null) {
+            return "";
+        }
+        return EntityUtils.toString(entity, StandardCharsets.UTF_8);
+    }
+
+    private String pushFailureMessage(int status, String reason, String responseBody) {
+        String baseMessage = "Push send failed: " + status + " " + reason;
+        if (responseBody == null || responseBody.isBlank()) {
+            return baseMessage;
+        }
+        return baseMessage + " body: " + truncate(responseBody, 1000);
+    }
+
+    private String truncate(String value, int maxLength) {
+        if (value == null || value.length() <= maxLength) {
+            return value;
+        }
+        return value.substring(0, maxLength) + "...";
     }
 
     public record PushSendResult(
