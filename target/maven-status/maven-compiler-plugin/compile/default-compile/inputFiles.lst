@@ -35,6 +35,7 @@ C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\wor
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\common\BadRequestException.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\error\GlobalExceptionHandler.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\service\ReminderScheduler.java
+C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\dto\PushTestResponse.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\push\service\PushNotificationService.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\config\CorsConfig.java
 C:\Users\Domenico\IdeaProjects\LifePlanner\src\main\java\it\univ\lifeplanner\workout\repository\WorkoutTemplateRepository.java

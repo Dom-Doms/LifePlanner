@@ -40,6 +40,7 @@ it\univ\lifeplanner\error\GlobalExceptionHandler.class
 it\univ\lifeplanner\planning\model\EventType.class
 it\univ\lifeplanner\security\JwtTokenService.class
 it\univ\lifeplanner\workout\model\WorkoutSession.class
+it\univ\lifeplanner\push\dto\PushTestResponse.class
 it\univ\lifeplanner\workout\repository\WorkoutSessionRepository.class
 it\univ\lifeplanner\security\UserPrincipal.class
 it\univ\lifeplanner\push\controller\PushNotificationController.class
@@ -67,6 +68,7 @@ it\univ\lifeplanner\user\service\UserService.class
 it\univ\lifeplanner\common\NotFoundException.class
 it\univ\lifeplanner\push\dto\PushSubscriptionRequest$PushSubscriptionKeys.class
 it\univ\lifeplanner\workout\model\WorkoutSessionParticipant.class
+it\univ\lifeplanner\push\service\PushNotificationService$PushSendResult.class
 it\univ\lifeplanner\workout\dto\WorkoutTemplateResponse.class
 it\univ\lifeplanner\planning\controller\DailyPlanController.class
 it\univ\lifeplanner\workout\service\WorkoutTemplateService.class

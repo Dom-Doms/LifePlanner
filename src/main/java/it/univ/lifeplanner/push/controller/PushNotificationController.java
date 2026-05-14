@@ -3,6 +3,7 @@ package it.univ.lifeplanner.push.controller;
 import it.univ.lifeplanner.push.dto.PushSubscriptionRequest;
 import it.univ.lifeplanner.push.dto.PushSubscriptionResponse;
 import it.univ.lifeplanner.push.dto.PushTestRequest;
+import it.univ.lifeplanner.push.dto.PushTestResponse;
 import it.univ.lifeplanner.push.service.PushNotificationService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -42,8 +43,8 @@ public class PushNotificationController {
     }
 
     @PostMapping("/test")
-    public void sendTest(@Valid @RequestBody(required = false) PushTestRequest request) {
-        service.sendTestToCurrentUser(
+    public PushTestResponse sendTest(@Valid @RequestBody(required = false) PushTestRequest request) {
+        return service.sendTestToCurrentUser(
             request == null ? null : request.title(),
             request == null ? null : request.body(),
             request == null ? null : request.url()
